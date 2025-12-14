@@ -43,36 +43,36 @@ const allProjects = [
     live: "https://topdatacoach.com/",
     github: "Private Repository (Institutional)",
   },
-  {
-    title: "StoxFlow",
-    icon: <FaChartLine />,
-    tech: ["React", "Node.js", "MongoDB", "Flask", "Yahoo Finance API"],
-    description:
-      "A full-stack stock trading website with AI-powered predictions, virtual trading, portfolio tracking, and real-time data using Yahoo Finance and Flask microservices.",
-    date: "Mar 2025 - Apr 2025",
-    live: "https://stox-flow.vercel.app/",
-    github: "https://github.com/Anisha2123/StoxFlow",
-  },
-  {
-    title: "Job Auto-Apply System",
-    icon: <FaBrain />,
-    tech: ["React", "Node.js", "MongoDB", "Puppeteer", "Express"],
-    description:
-      "A MERN stack automation platform that auto-applies to jobs on LinkedIn and Internshala. Includes profile management, resume upload, Puppeteer-based automation, and MongoDB tracking.",
-    date: "Apr 2025 - May 2025",
-    live: "https://job-portal-orcin-delta.vercel.app/",
-    github: "https://github.com/Anisha2123/Job_Portal",
-  },
-  {
-    title: "PratibhaSkills",
-    icon: <FaGraduationCap />,
-    tech: ["React", "Node.js", "MongoDB", "Express", "TailwindCSS"],
-    description:
-      "A MERN stack landing page for Pratibha Skill Development Center. Features dynamic course listings, contact form with Nodemailer, testimonials, and admin panel for content management.",
-    date: "Apr 2025 - Apr 2025",
-    live: "https://pratibhadev.vercel.app/",
-    github: "https://github.com/Anisha2123/Education_Website_Demo",
-  },
+  // {
+  //   title: "StoxFlow",
+  //   icon: <FaChartLine />,
+  //   tech: ["React", "Node.js", "MongoDB", "Flask", "Yahoo Finance API"],
+  //   description:
+  //     "A full-stack stock trading website with AI-powered predictions, virtual trading, portfolio tracking, and real-time data using Yahoo Finance and Flask microservices.",
+  //   date: "Mar 2025 - Apr 2025",
+  //   live: "https://stox-flow.vercel.app/",
+  //   github: "https://github.com/Anisha2123/StoxFlow",
+  // },
+  // {
+  //   title: "Job Auto-Apply System",
+  //   icon: <FaBrain />,
+  //   tech: ["React", "Node.js", "MongoDB", "Puppeteer", "Express"],
+  //   description:
+  //     "A MERN stack automation platform that auto-applies to jobs on LinkedIn and Internshala. Includes profile management, resume upload, Puppeteer-based automation, and MongoDB tracking.",
+  //   date: "Apr 2025 - May 2025",
+  //   live: "https://job-portal-orcin-delta.vercel.app/",
+  //   github: "https://github.com/Anisha2123/Job_Portal",
+  // },
+  // {
+  //   title: "PratibhaSkills",
+  //   icon: <FaGraduationCap />,
+  //   tech: ["React", "Node.js", "MongoDB", "Express", "TailwindCSS"],
+  //   description:
+  //     "A MERN stack landing page for Pratibha Skill Development Center. Features dynamic course listings, contact form with Nodemailer, testimonials, and admin panel for content management.",
+  //   date: "Apr 2025 - Apr 2025",
+  //   live: "https://pratibhadev.vercel.app/",
+  //   github: "https://github.com/Anisha2123/Education_Website_Demo",
+  // },
   {
     title: "Discord Color Generator",
     icon: <FaPalette />,
@@ -207,39 +207,57 @@ const Projects = () => {
     </div>
 
     {/* Pagination – Clean & Subtle */}
-    <div className="mt-16 flex justify-center items-center gap-6 text-sm font-medium text-gray-600">
-      <button
-        onClick={handlePrev}
-        disabled={currentPage === 1}
-        className="
-          px-5 py-2 rounded-full
-          bg-white border border-gray-300
-          hover:border-blue-600 hover:text-blue-600
-          disabled:opacity-40
-          transition
-        "
-      >
-        ← Previous
-      </button>
+    {/* Pagination – Mobile-Friendly & Elegant */}
+<div className="mt-14 flex items-center justify-center gap-3 md:gap-6 text-sm font-medium text-gray-600">
 
-      <span className="text-gray-500">
-        Page {currentPage} of {totalPages}
-      </span>
+  {/* Previous */}
+  <button
+    onClick={handlePrev}
+    disabled={currentPage === 1}
+    className="
+      flex items-center justify-center gap-2
+      h-10 px-4 md:px-5
+      rounded-full
+      bg-white border border-gray-300
+      hover:border-blue-600 hover:text-blue-600
+      disabled:opacity-40
+      transition
+    "
+  >
+    <span className="text-lg">←</span>
+    <span className="hidden md:inline">Previous</span>
+  </button>
 
-      <button
-        onClick={handleNext}
-        disabled={currentPage === totalPages}
-        className="
-          px-5 py-2 rounded-full
-          bg-white border border-gray-300
-          hover:border-blue-600 hover:text-blue-600
-          disabled:opacity-40
-          transition
-        "
-      >
-        Next →
-      </button>
-    </div>
+  {/* Page Indicator */}
+  <span className="
+    px-4 py-2
+    rounded-full
+    bg-gray-100 text-gray-600
+    text-xs md:text-sm
+  ">
+    {currentPage} / {totalPages}
+  </span>
+
+  {/* Next */}
+  <button
+    onClick={handleNext}
+    disabled={currentPage === totalPages}
+    className="
+      flex items-center justify-center gap-2
+      h-10 px-4 md:px-5
+      rounded-full
+      bg-white border border-gray-300
+      hover:border-blue-600 hover:text-blue-600
+      disabled:opacity-40
+      transition
+    "
+  >
+    <span className="hidden md:inline">Next</span>
+    <span className="text-lg">→</span>
+  </button>
+
+</div>
+
 
   </div>
 </section>

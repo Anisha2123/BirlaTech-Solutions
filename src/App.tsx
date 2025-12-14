@@ -6,7 +6,7 @@ import Footer from "./components/Footer";
 import Home from "./pages1/Home";
 
 import "./App.css";
-import CustomCursor from "./components/CustomCursor";
+
 
 const App = () => {
   return (
@@ -14,7 +14,7 @@ const App = () => {
       <Router>
         {/* Persistent Navbar */}
         <Navbar />
-    <CustomCursor />
+    {/* <CustomCursor /> */}
         {/* Routes */}
         <Routes>
           <Route path="/" element={<Home />} />

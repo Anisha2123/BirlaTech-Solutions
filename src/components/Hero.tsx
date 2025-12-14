@@ -1,4 +1,4 @@
-import profile from "../assets/pic.jpg";
+import profile from "../assets/pic1.png";
 import Typewriter from "react-typewriter-effect";
 
 const Hero = () => {
@@ -99,9 +99,9 @@ const Hero = () => {
               alt="Anisha Birla"
               className="
                 w-[300px] lg:w-[330px]
-                max-h-[440px]
+                max-h-[540px]
                 object-cover
-                rounded-3xl shadow-xl
+                rounded-3xl 
               "
             />
 
