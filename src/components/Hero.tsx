@@ -1,4 +1,4 @@
-import profile from "../assets/pic1.png";
+import profile from "../assets/pic1.webp";
 import Typewriter from "react-typewriter-effect";
 
 const Hero = () => {
