@@ -1,4 +1,4 @@
-import profile from "../assets/pic1.webp";
+import profile from "../assets/pic6.png";
 import Typewriter from "react-typewriter-effect";
 
 const Hero = () => {
@@ -69,7 +69,7 @@ const Hero = () => {
             </div>
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-blue-600"></span>
-              Strong DSA • 500+ LeetCode
+              DSA • 500+ LeetCode
             </div>
           </div>
 
