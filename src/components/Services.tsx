@@ -4,8 +4,8 @@ import {
   FaWhatsapp,
   FaCheckCircle,
 } from "react-icons/fa";
-
-import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect } from "react";
 
 const VISIBLE_COUNT = 3;
 
@@ -111,16 +111,21 @@ const services = [
 ];
 
 
-
-
-
-
 const Services = () => {
-    const [showAll, setShowAll] = useState(false);
+      const [showAll, setShowAll] = useState(false);
 
   const visibleServices = showAll
     ? services
     : services.slice(0, VISIBLE_COUNT);
+
+  // Smooth scroll back when collapsing (enterprise UX)
+  useEffect(() => {
+    if (!showAll) {
+      document
+        .getElementById("services")
+        ?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [showAll]);
 
   return (
     <section id="services" className="py-24 px-6 bg-white">
@@ -133,108 +138,127 @@ const Services = () => {
   Professional web development solutions designed for startups,
   businesses, and scalable products.
 </p>
+ {/* Animated Height Wrapper */}
+        <motion.div
+          layout
+          initial={false}
+          transition={{ duration: 0.45, ease: "easeInOut" }}
+          className="overflow-hidden"
+        >
+          {/* Services Grid */}
+          <motion.div
+            layout
+            className="grid gap-10 md:grid-cols-3 py-10"
+          >
+            <AnimatePresence>
+              {visibleServices.map((service) => (
+                <motion.div
+                  key={service.title}
+                  layout
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  transition={{ duration: 0.35, ease: "easeOut" }}
+                  className={`relative bg-white rounded-3xl border p-8 flex flex-col justify-between
+                    ${
+                      service.popular
+                        ? "border-blue-500 shadow-xl scale-[1.03]"
+                        : "border-gray-200 shadow-md hover:shadow-xl"
+                    }`}
+                >
+                  {/* Most Popular Badge */}
+                  {service.popular && (
+                    <span className="absolute -top-3 right-6 bg-blue-600 text-white text-xs font-semibold px-4 py-1 rounded-full shadow">
+                      Most Popular
+                    </span>
+                  )}
 
+                  {/* Content */}
+                  <div>
+                    <h3 className="text-2xl font-semibold text-gray-900 mb-2">
+                      {service.title}
+                    </h3>
+
+                    <p className="text-3xl font-bold text-blue-600 mb-4">
+                      {service.priceLabel} {service.price}
+                    </p>
+
+                    <p className="text-gray-900 text-sm leading-relaxed mb-6">
+                      {service.description}
+                    </p>
+
+                    {/* Features */}
+                    <ul className="space-y-2 mb-6">
+                      {service.features.map((feature) => (
+                        <li
+                          key={feature}
+                          className="flex items-center gap-2 text-gray-700 text-sm"
+                        >
+                          <FaCheckCircle className="text-green-500" />
+                          {feature}
+                        </li>
+                      ))}
+                    </ul>
+
+                    {/* Tech Stack */}
+                    <div className="flex flex-wrap gap-2">
+                      {service.stacks.map((stack) => (
+                        <span
+                          key={stack}
+                          className="text-xs font-medium px-3 py-1 rounded-full bg-gray-100 text-gray-700"
+                        >
+                          {stack}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* CTA */}
+                  <div className="mt-8 flex flex-col gap-3">
+                    <a
+                      href="https://calendly.com/birlaani/new-meeting"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold transition"
+                    >
+                      <FaCalendarAlt />
+                      Book a Call
+                    </a>
+
+                    <a
+                      href="https://wa.me/916307255290"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border border-gray-300 hover:border-green-500 hover:text-green-600 font-semibold transition"
+                    >
+                      <FaWhatsapp />
+                      WhatsApp
+                    </a>
+                  </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </motion.div>
+        </motion.div>
+
+        {/* Toggle Button (kept OUTSIDE animated container) */}
+        {services.length > VISIBLE_COUNT && (
+          <div className="mt-16 flex justify-center">
+            <button
+              onClick={() => setShowAll(prev => !prev)}
+              className="px-8 py-3 rounded-full
+                border border-gray-300
+                text-gray-800 font-semibold
+                hover:border-blue-600 hover:text-blue-600
+                transition-all duration-300"
+            >
+              {showAll ? "Show Less Services" : "View All Services"}
+            </button>
+          </div>
+        )}
 
         {/* Services Grid */}
-        <div className="grid gap-10 md:grid-cols-3">
-          {visibleServices.map((service) => (
-            <div
-              key={service.title}
-              className={`relative bg-white rounded-3xl border p-8 flex flex-col justify-between transition-all
-                ${
-                  service.popular
-                    ? "border-blue-500 shadow-xl scale-[1.03]"
-                    : "border-gray-200 shadow-md hover:shadow-xl"
-                }`}
-            >
-              {/* Most Popular Badge */}
-              {service.popular && (
-                <span className="absolute -top-3 right-6 bg-blue-600 text-white text-xs font-semibold px-4 py-1 rounded-full shadow">
-                  Most Popular
-                </span>
-              )}
-
-              {/* Title */}
-              <div>
-                <h3 className="text-2xl font-semibold text-gray-900 mb-2">
-                  {service.title}
-                </h3>
-           
-                <p className="text-3xl font-bold text-blue-600 mb-4">
-               {service.priceLabel}   {service.price}
-                </p>
-
-                {/* Description */}
-                <p className="text-gray-900 text-sm leading-relaxed mb-6">
-  {service.description}
-</p>
-
-
-                {/* Features */}
-                <ul className="space-y-2 mb-6">
-                  {service.features.map((feature) => (
-                    <li
-                      key={feature}
-                      className="flex items-center gap-2 text-gray-700 text-sm"
-                    >
-                      <FaCheckCircle className="text-green-500" />
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-
-                {/* Tech Stack */}
-                <div className="flex flex-wrap gap-2">
-                  {service.stacks.map((stack) => (
-                    <span
-                      key={stack}
-                      className="text-xs font-medium px-3 py-1 rounded-full bg-gray-100 text-gray-700"
-                    >
-                      {stack}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              {/* CTA Buttons */}
-              <div className="mt-8 flex flex-col gap-3">
-                <a
-                  href="https://calendly.com/birlaani/new-meeting"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold transition"
-                >
-                  <FaCalendarAlt />
-                  Book a Call
-                </a>
-
-                <a
-                  href="https://wa.me/916307255290"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border border-gray-300 hover:border-green-500 hover:text-green-600 font-semibold transition"
-                >
-                  <FaWhatsapp />
-                  WhatsApp
-                </a>
-              </div>
-            </div>
-          ))}
-        </div>
-        {services.length > VISIBLE_COUNT && (
-  <div className="mt-16 flex justify-center">
-    <button
-      onClick={() => setShowAll(prev => !prev)}
-      className="px-8 py-3 rounded-full
-      border border-gray-300
-      text-gray-800 font-semibold
-      hover:border-blue-600 hover:text-blue-600
-      transition-all duration-300"
-    >
-      {showAll ? "Show Less Services" : "View All Services"}
-    </button>
-  </div>
-)}
+       
 
       </div>
     </section>
