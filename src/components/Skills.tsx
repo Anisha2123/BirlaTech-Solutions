@@ -48,7 +48,7 @@ const Skills = () => {
               Tools & Engineering Practices
             </h3>
             <p className="text-gray-600 leading-relaxed">
-              Git, GitHub, API Integration, Responsive Design, Performance
+              AWS, Git, GitHub, API Integration, Responsive Design, Performance
               Optimization
             </p>
           </div>

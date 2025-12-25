@@ -5,53 +5,123 @@ import {
   FaCheckCircle,
 } from "react-icons/fa";
 
+import { useState } from "react";
+
+const VISIBLE_COUNT = 3;
+
+
+
+
 const services = [
   {
     title: "Basic Website",
-    price: "₹2,000",
+    priceLabel: "From",
+    price: "₹2K+",
     popular: false,
     description:
-      "Clean, responsive static or portfolio websites ideal for individuals, startups, and personal branding.",
+      "Clean, fast, and responsive websites for individuals, startups, and early-stage brands.",
     features: [
-      "Responsive UI (Mobile + Desktop)",
-      "Landing Page / Portfolio Website",
+      "Responsive UI (Mobile & Desktop)",
+      "Landing Page or Portfolio Website",
       "Contact Form Integration",
-      "Basic SEO Setup",
+      "Basic SEO & Performance Setup",
     ],
     stacks: ["HTML", "CSS", "JavaScript", "React"],
   },
+
   {
     title: "Professional Web App",
-    price: "₹5,000",
-    popular: true, // ⭐ MOST POPULAR
+    priceLabel: "Projects from",
+    price: "₹8K+",
+    popular: true,
     description:
-      "End-to-end full-stack applications suitable for real businesses, startups, and scalable products.",
+      "Full-stack web applications built for real users, real data, and real business needs.",
     features: [
       "Authentication & Authorization",
-      "Admin Dashboard",
+      "Admin Dashboard & User Management",
       "Payment Gateway Integration",
-      "REST APIs & Database",
+      "REST APIs & Database Design",
     ],
-    stacks: ["MERN", "MEAN", "Angular", "Next.js", "MongoDB", "SQL"],
+    stacks: ["MERN", "MEAN", "Next.js", "MongoDB", "SQL"],
   },
+
   {
-    title: "Advanced Scalable System",
-    price: "₹8,000",
+    title: "Startup MVP Development",
+    priceLabel: "Starting at",
+    price: "₹20K+",
     popular: false,
     description:
-      "Production-ready, cloud-deployed systems built for scalability, security, and performance.",
+      "Rapid MVP development to validate ideas, attract users, and secure early traction.",
+    features: [
+      "Product Architecture & Planning",
+      "Core Feature Development",
+      "Authentication & API Setup",
+      "MVP Deployment & Handover",
+    ],
+    stacks: ["React", "Node.js", "MongoDB", "Firebase"],
+  },
+
+  {
+    title: "E-Commerce Solutions & Support",
+    priceLabel: "From",
+    price: "₹40K+",
+    popular: false,
+    description:
+      "Secure and scalable e-commerce platforms tailored for modern online businesses.",
+    features: [
+      "Product & Order Management",
+      "Payment Gateway Integration",
+      "User Accounts & Checkout Flow",
+      "Admin Dashboard & Analytics",
+    ],
+    stacks: ["Next.js", "Node.js", "MongoDB", "Stripe", "AWS"],
+  },
+
+  {
+    title: "Advanced Scalable Systems",
+    priceLabel: "Enterprise",
+    price: "Custom Quote",
+    popular: false,
+    description:
+      "Production-grade systems designed for scalability, security, and long-term growth.",
     features: [
       "Cloud Deployment (AWS)",
       "Scalable Backend Architecture",
       "Role-Based Access Control",
-      "Performance Optimization",
+      "Performance & Security Optimization",
     ],
     stacks: ["Next.js", "Node.js", "MongoDB", "AWS", "SQL"],
   },
+  {
+  title: "Ongoing Support & Optimization",
+  priceLabel: "From",
+  price: "₹20k / month",
+  popular: false,
+  description:
+    "Continuous maintenance, performance tuning, security updates, and feature improvements for live production systems.",
+  features: [
+    "Bug Fixes & Monitoring",
+    "Performance & SEO Optimization",
+    "Security Patches & Backups",
+    "Minor Feature Enhancements",
+  ],
+  stacks: ["AWS", "Node.js", "MongoDB", "React", "CloudFront"],
+}
+
 ];
 
 
+
+
+
+
 const Services = () => {
+    const [showAll, setShowAll] = useState(false);
+
+  const visibleServices = showAll
+    ? services
+    : services.slice(0, VISIBLE_COUNT);
+
   return (
     <section id="services" className="py-24 px-6 bg-white">
       <div className="max-w-6xl mx-auto">
@@ -67,7 +137,7 @@ const Services = () => {
 
         {/* Services Grid */}
         <div className="grid gap-10 md:grid-cols-3">
-          {services.map((service) => (
+          {visibleServices.map((service) => (
             <div
               key={service.title}
               className={`relative bg-white rounded-3xl border p-8 flex flex-col justify-between transition-all
@@ -89,8 +159,9 @@ const Services = () => {
                 <h3 className="text-2xl font-semibold text-gray-900 mb-2">
                   {service.title}
                 </h3>
+           
                 <p className="text-3xl font-bold text-blue-600 mb-4">
-                  {service.price}
+               {service.priceLabel}   {service.price}
                 </p>
 
                 {/* Description */}
@@ -150,6 +221,21 @@ const Services = () => {
             </div>
           ))}
         </div>
+        {services.length > VISIBLE_COUNT && (
+  <div className="mt-16 flex justify-center">
+    <button
+      onClick={() => setShowAll(prev => !prev)}
+      className="px-8 py-3 rounded-full
+      border border-gray-300
+      text-gray-800 font-semibold
+      hover:border-blue-600 hover:text-blue-600
+      transition-all duration-300"
+    >
+      {showAll ? "Show Less Services" : "View All Services"}
+    </button>
+  </div>
+)}
+
       </div>
     </section>
   );

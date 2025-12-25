@@ -38,7 +38,6 @@ const Hero = () => {
               multiText={[
                 "Trainee Data Engineer @ PalTech",
                 "Full Stack Development • MERN • Angular • Next.js",
-                "500+ LeetCode Problems • Top 15% Globally",
                 "Web Platforms • Data-Driven Systems • Cloud Solutions",
               ]}
               multiTextDelay={1700}

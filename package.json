@@ -19,7 +19,7 @@
     "canvas-confetti": "^1.9.3",
     "classnames": "^2.5.1",
     "drei": "^2.2.21",
-    "framer-motion": "^12.7.3",
+    "framer-motion": "^12.23.26",
     "lottie-react": "^2.4.1",
     "lottie-web": "^5.12.2",
     "react": "^19.1.0",
