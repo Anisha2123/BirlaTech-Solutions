@@ -57,23 +57,27 @@ const Hero = () => {
 
           {/* Tech Highlights */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-gray-700">
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-blue-600"></span>
-              MERN, MEAN, Next.js, SQL, MongoDB
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-blue-600"></span>
-              AWS, REST APIs, System Design
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-blue-600"></span>
-              AI, FinTech & EdTech Projects
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-blue-600"></span>
-              DSA • 500+ LeetCode
-            </div>
-          </div>
+  <div className="flex items-center gap-2">
+    <span className="w-2 h-2 rounded-full bg-blue-600"></span>
+    MERN, MEAN, Next.js with MongoDB
+  </div>
+
+  <div className="flex items-center gap-2">
+    <span className="w-2 h-2 rounded-full bg-blue-600"></span>
+    AWS Deployment & System Design
+  </div>
+
+  <div className="flex items-center gap-2">
+    <span className="w-2 h-2 rounded-full bg-blue-600"></span>
+    AI-driven FinTech & EdTech Solutions
+  </div>
+
+  <div className="flex items-center gap-2">
+    <span className="w-2 h-2 rounded-full bg-blue-600"></span>
+    Client-focused delivery with high satisfaction rates
+  </div>
+</div>
+
 
           {/* CTA */}
           <div className="flex gap-4 pt-4">
