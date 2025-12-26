@@ -31,9 +31,17 @@ const Navbar = () => {
           onClick={() => scrollToSection("home")}
           className="cursor-pointer"
         >
-          <p className="text-shadow-2xs uppercase tracking-widest text-blue-600 font-semibold">
-            BirlaTech Solutions
-          </p>
+          <div className="flex flex-col">
+  <p className="uppercase tracking-[0.4em] font-bold text-shadow-2xs  text-blue-600 ">
+    Devlyn
+  </p>
+  <span className="h-[2px] w-10 bg-gradient-to-r from-blue-500 to-cyan-400 rounded-full mt-1" />
+</div>
+
+
+
+
+
         </div>
 
         {/* DESKTOP NAV */}
