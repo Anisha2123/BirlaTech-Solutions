@@ -20,7 +20,7 @@ const Hero = () => {
     });
   };
   return (
-    <section className="relative min-h-screen flex items-center justify-center md:pt-20 pb-2 overflow-hidden bg-white">
+    <section className="pt-15 relative min-h-screen flex items-center justify-center md:pt-20 pb-2 overflow-hidden bg-white">
       {/* Background Architectural Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-blue-50/40 via-transparent to-transparent opacity-70" />

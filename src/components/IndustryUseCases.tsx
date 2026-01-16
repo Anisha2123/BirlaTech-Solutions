@@ -186,7 +186,7 @@ const IndustryUseCases = () => {
                     <span className="text-blue-400 font-mono text-sm tracking-widest uppercase mb-6 block">
                       Case Study // {activeTab.id}
                     </span>
-                    <h3 className="text-3xl md:text-4xl font-bold mb-6">
+                    <h3 className="text-2xl md:text-4xl font-bold mb-6">
                       {activeTab.description}
                     </h3>
                     
@@ -294,7 +294,7 @@ const IndustryUseCases = () => {
         <div className="relative bg-white/[0.02] rounded-[1.5rem] p-8 border border-white/5 flex flex-col justify-center min-h-[300px]">
           <span className="absolute top-6 left-8 text-[9px] font-mono text-slate-500 uppercase tracking-widest">Protocol Visualization // 0x4F</span>
           
-          <div className="flex flex-col gap-4 items-center justify-center opacity-90">
+          <div className="mt-5 flex flex-col gap-4 items-center justify-center opacity-90">
             <div className="w-32 py-2 px-4 text-center border border-blue-500/30 bg-blue-500/5 rounded-lg text-[10px] font-mono font-bold text-blue-400">Client Edge</div>
             <div className="h-6 w-px bg-gradient-to-b from-blue-500/40 to-white/10"></div>
             
