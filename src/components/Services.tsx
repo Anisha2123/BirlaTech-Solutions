@@ -126,7 +126,7 @@ const Services = () => {
         </div>
 
         {/* Toggle Button */}
-        <div className="md:mt-10 flex justify-center">
+        <div className="mt-10 flex justify-center">
           <button
             onClick={handleToggle}
             className="group flex items-center gap-3 px-8 py-4 rounded-full border border-slate-200 text-slate-900 font-bold text-xs font-mono uppercase tracking-[0.2em] hover:border-blue-600 hover:text-blue-600 transition-all duration-300 shadow-sm"
