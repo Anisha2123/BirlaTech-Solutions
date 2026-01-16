@@ -29,18 +29,6 @@ const experiences = [
       "Integrated Razorpay for payments and deployed on AWS"
     ]
   },
-  // {
-  //   title: "GirlScript Summer of Code (GSSoC) 2024",
-  //   date: "Oct 2024 - Nov 2024",
-  //   role: "Contributor",
-  //   type: "Part Time",
-  //   location: "Remote",
-  //   description: [
-  //     "Contributed to open-source projects as part of GSSoC 2024",
-  //     "Collaborated with mentors and developers to improve software solutions",
-  //     "Enhanced skills in problem-solving, collaboration, and coding"
-  //   ]
-  // }
 ];
 
 const Experience = () => {
@@ -54,15 +42,17 @@ const Experience = () => {
     {/* Section Header */}
     <div className="max-w-2xl mb-16">
       <p className="text-sm uppercase tracking-widest text-blue-600 font-semibold mb-3">
-        Professional Journey
-      </p>
-      <h2 className="text-4xl md:text-5xl font-bold leading-tight">
-        Experience & Industry Work
-      </h2>
-      <p className="mt-4 text-gray-600 leading-relaxed">
-        Hands-on experience working across data engineering, full-stack
-        development, and real-world production systems.
-      </p>
+  Client Delivery
+</p>
+<h2 className="text-4xl md:text-5xl font-bold leading-tight">
+  Delivering Production-Ready Systems for Real-World Use
+</h2>
+<p className="mt-4 text-gray-600 leading-relaxed">
+  We partner with organizations to design, build, and deploy scalable
+  digital systems that meet real business needs — from data platforms
+  to full-scale web applications.
+</p>
+
     </div>
 
     {/* Experience List */}
@@ -117,8 +107,10 @@ const Experience = () => {
               </li>
             ))}
           </ul>
+          
         </div>
       ))}
+      
     </div>
 
   </div>

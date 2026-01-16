@@ -1,124 +1,99 @@
-import profile from "../assets/pic6.png";
-import Typewriter from "react-typewriter-effect";
-import { useState } from "react";
+import React from 'react';
+import { motion } from 'framer-motion';
+import { ArrowRight, ChevronRight, Play } from 'lucide-react';
+
 const Hero = () => {
-  
-  const [loaded, setLoaded] = useState(false);
+  const scrollToSection = (id: string) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
   return (
-     
-    <section
-      id="home"
-      className="min-h-[calc(100vh-80px)] flex items-center bg-gray-50 pt-24"
-    >
-      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 items-center px-1">
+    <section className="relative min-h-screen flex items-center justify-center pt-20 pb-2 overflow-hidden bg-white">
+      {/* Background Architectural Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-blue-50/40 via-transparent to-transparent opacity-70" />
+        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100 contrast-150" />
+      </div>
 
-        {/* LEFT CONTENT */}
-        <div className="space-y-6">
+      <div className="relative z-10 max-w-7xl mx-auto px-6 text-center">
+        
+        {/* Top Badge */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-100 text-blue-600 mt-5 mb-1"
+        >
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
+          </span>
+          <span className="text-[10px] font-bold uppercase tracking-wider">Now scaling enterprise partners</span>
+          <ChevronRight size={14} />
+        </motion.div>
 
-          <h1 className="text-4xl md:text-4xl font-bold text-gray-900 leading-tight">
-            Building Scalable Digital Solutions
+        {/* Headline */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+        >
+          <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight text-slate-900 mb-8">
+            Engineering the <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-500 to-blue-400">
+              Future of Web.
+            </span>
           </h1>
+        </motion.div>
 
-          {/* <h2 className="text-lg font-medium text-gray-700">
-            Founded & led by{" "}
-            <span className="text-blue-600 font-semibold">Anisha Birla</span>
-          </h2> */}
+        {/* Sub-text */}
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1, delay: 0.5 }}
+          className="text-lg md:text-xl text-slate-500 max-w-2xl mx-auto mb-5 leading-relaxed"
+        >
+          Devlyn architects business-critical platforms for high-growth startups 
+          and global enterprises. Specialized in MERN, Cloud-Native, and 
+          performance-first digital infrastructure.
+        </motion.p>
 
-          {/* Typewriter */}
-          <div className="text-gray-600 text-lg">
-            <Typewriter
-              textStyle={{
-                fontSize: "1.05rem",
-                fontWeight: 500,
-                color: "#4B5563",
-                fontFamily: "Inter, sans-serif",
-              }}
-              startDelay={300}
-              cursorColor="#2563EB"
-              multiText={[
-                "Trainee Data Engineer @ PalTech",
-                "Full Stack Development • MERN • Angular • Next.js",
-                "Web Platforms • Data-Driven Systems • Cloud Solutions",
-              ]}
-              multiTextDelay={1700}
-              typeSpeed={50}
-            />
-          </div>
-
-          {/* Summary */}
-          <p className="text-gray-600 max-w-xl leading-relaxed border-l-4 border-blue-600 pl-4">
-            From idea to deployment, we provide end-to-end web development —
-            making this your{" "}
-            <span className="font-semibold text-gray-900">
-              one-stop solution
-            </span>{" "}
-            for modern, scalable, and high-quality digital products.
-          </p>
-
-          {/* Tech Highlights */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-gray-700">
-  <div className="flex items-center gap-2">
-    <span className="w-2 h-2 rounded-full bg-blue-600"></span>
-    MERN, MEAN, Next.js with MongoDB
-  </div>
-
-  <div className="flex items-center gap-2">
-    <span className="w-2 h-2 rounded-full bg-blue-600"></span>
-    AWS Deployment & System Design
-  </div>
-
-  <div className="flex items-center gap-2">
-    <span className="w-2 h-2 rounded-full bg-blue-600"></span>
-    AI-driven FinTech & EdTech Solutions
-  </div>
-
-  <div className="flex items-center gap-2">
-    <span className="w-2 h-2 rounded-full bg-blue-600"></span>
-    Client-focused delivery with high satisfaction rates
-  </div>
-</div>
-
-
-          {/* CTA */}
-          <div className="flex gap-4 pt-4">
-            <a
-              href="#projects"
-              className="px-6 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition"
-            >
-              View Projects
-            </a>
-
-            <a
-              href="#contact"
-              className="px-6 py-3 rounded-lg border border-gray-300 hover:border-blue-600 hover:text-blue-600 font-semibold transition"
-            >
-              Contact Me
-            </a>
-          </div>
+        {/* CTAs */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.7 }}
+          className="flex flex-col sm:flex-row items-center justify-center gap-4 "
+        >
+          <div className="flex flex-col sm:flex-row items-center gap-4">
+      {/* Primary Call to Action */}
+      <button 
+        onClick={() => scrollToSection("contact")}
+        className="group relative px-8 py-4 bg-slate-900 text-white rounded-full font-bold uppercase tracking-widest text-[10px] overflow-hidden transition-all hover:scale-105 active:scale-95 shadow-2xl shadow-slate-200"
+      >
+        <span className="relative z-10 flex items-center gap-2">
+          Start Your Project 
+          <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+        </span>
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-blue-700 opacity-0 group-hover:opacity-100 transition-opacity" />
+      </button>
+      
+      {/* Secondary Call to Action */}
+      <button 
+        onClick={() => scrollToSection("industries")}
+        className="flex items-center gap-3 px-8 py-4 bg-white text-slate-600 border border-slate-200 rounded-full font-bold uppercase tracking-widest text-[10px] hover:bg-slate-50 hover:border-blue-600 hover:text-blue-600 transition-all active:scale-95"
+      >
+        <div className="w-6 h-6 rounded-full bg-blue-50 flex items-center justify-center group-hover:bg-blue-600 transition-colors">
+          <Play size={10} className="fill-blue-600 text-blue-600 ml-0.5 group-hover:fill-white group-hover:text-white transition-colors" />
         </div>
+        View Case Studies
+      </button>
+    </div>
+        </motion.div>
 
-        {/* RIGHT IMAGE — Hidden on Small Screens */}
-        <div className="hidden md:flex justify-end">
-          <div className="relative">
-            <img
-              src={profile}
-              alt="Anisha Birla"
-              className={`
-                w-[300px] lg:w-[330px]
-                max-h-[540px]
-                object-cover
-                rounded-3xl transition-opacity duration-500 ease-out
-          ${loaded ? "opacity-100" : "opacity-0"}
-              `}
-               onLoad={() => setLoaded(true)}
-        loading="eager" // IMPORTANT for hero/profile
-            />
-
-            {/* Accent */}
-            <div className="absolute -z-10 -bottom-4 -right-4 w-full h-full rounded-3xl bg-blue-100"></div>
-          </div>
-        </div>
-
+      
       </div>
     </section>
   );
