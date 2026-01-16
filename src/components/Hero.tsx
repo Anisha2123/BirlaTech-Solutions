@@ -1,16 +1,26 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion, animate } from 'framer-motion';
 import { ArrowRight, ChevronRight, Play } from 'lucide-react';
 
 const Hero = () => {
   const scrollToSection = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
+    const target = document.getElementById(id);
+    if (!target) return;
+
+    // Calculate the position with an offset (e.g., 80px for a sticky header)
+    const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - 80;
+    
+   animate(window.scrollY, targetPosition, {
+      type: "spring",
+      stiffness: 120, // Increased from 40 for a much snappier start
+      damping: 25,    // Balanced to ensure a smooth, no-bounce finish
+      mass: 0.5,      // Reduced mass makes it feel lighter and faster
+      restDelta: 0.5, // Stops the animation immediately once close
+      onUpdate: (latest) => window.scrollTo(0, latest),
+    });
   };
   return (
-    <section className="relative min-h-screen flex items-center justify-center pt-20 pb-2 overflow-hidden bg-white">
+    <section className="relative min-h-screen flex items-center justify-center md:pt-20 pb-2 overflow-hidden bg-white">
       {/* Background Architectural Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-blue-50/40 via-transparent to-transparent opacity-70" />
@@ -24,7 +34,7 @@ const Hero = () => {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-100 text-blue-600 mt-5 mb-1"
+          className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-100 text-blue-600 max-sm:mb-4"
         >
           <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
@@ -83,7 +93,7 @@ const Hero = () => {
       {/* Secondary Call to Action */}
       <button 
         onClick={() => scrollToSection("industries")}
-        className="flex items-center gap-3 px-8 py-4 bg-white text-slate-600 border border-slate-200 rounded-full font-bold uppercase tracking-widest text-[10px] hover:bg-slate-50 hover:border-blue-600 hover:text-blue-600 transition-all active:scale-95"
+        className="group flex items-center gap-3 px-8 py-4 bg-white text-slate-600 border border-slate-200 rounded-full font-bold uppercase tracking-widest text-[10px] hover:bg-slate-50 hover:border-blue-600 hover:text-blue-600 transition-all active:scale-95"
       >
         <div className="w-6 h-6 rounded-full bg-blue-50 flex items-center justify-center group-hover:bg-blue-600 transition-colors">
           <Play size={10} className="fill-blue-600 text-blue-600 ml-0.5 group-hover:fill-white group-hover:text-white transition-colors" />
