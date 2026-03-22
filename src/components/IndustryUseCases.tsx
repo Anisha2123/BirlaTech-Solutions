@@ -446,98 +446,128 @@ function MobileLayout({ onOpen }: { onOpen: (i: Industry) => void }) {
   const cats = ['All', ...Array.from(new Set(industries.map(i => i.category)))];
   const filtered = activeCat === 'All' ? industries : industries.filter(i => i.category === activeCat);
 
+  // shared card style pieces
+  const iconBox: React.CSSProperties = {
+    width: 40, height: 40, borderRadius: 11,
+    background: 'rgba(133,57,83,0.08)',
+    display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+  };
+  const statChip: React.CSSProperties = {
+    flex: 1, background: 'rgba(133,57,83,0.05)',
+    borderRadius: 9, padding: '7px 6px', textAlign: 'center',
+  };
+
   return (
-    <div style={{ fontFamily: "'Outfit', sans-serif", background: C.bg, minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      {/* Sticky app bar */}
-      <div style={{ position: 'sticky', top: 0, zIndex: 40, background: C.bg, padding: '.65rem 1rem', borderBottom: '1px solid rgba(133,57,83,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '.55rem' }}>
-          <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#853953' }} />
-          <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.15rem', fontWeight: 700, color: C.dark }}>
-            We speak <em style={{ color: '#853953' }}>your industry.</em>
+    <div style={{ fontFamily: "'Outfit', sans-serif", background: C.bg }}>
+
+      {/* ── Nav ── */}
+      <div style={{ background: C.bg, padding: '14px 16px 10px', borderBottom: '1px solid rgba(133,57,83,.1)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+          <span style={{ position: 'relative', width: 8, height: 8, display: 'inline-block' }}>
+            <span className="animate-ping" style={{ position: 'absolute', inset: 0, borderRadius: '50%', background: C.rose, opacity: .7 }} />
+            <span style={{ position: 'relative', display: 'block', width: 8, height: 8, borderRadius: '50%', background: C.rose }} />
+          </span>
+          <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 18, fontWeight: 700, color: C.dark, lineHeight: 1 }}>
+            We speak <em style={{ color: C.rose }}>your industry.</em>
           </span>
         </div>
-        <span style={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '.14em', padding: '.25rem .65rem', borderRadius: '999px', background: 'rgba(133,57,83,0.1)', color: '#853953' }}>
-          6 Verticals
+        <span style={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase' as const, letterSpacing: '.12em', padding: '5px 11px', borderRadius: 999, background: 'rgba(133,57,83,.1)', color: C.rose }}>
+          6 Sectors
         </span>
       </div>
 
-      {/* Summary strip */}
-      <div style={{ display: 'flex', overflowX: 'auto', gap: '.5rem', padding: '.65rem 1rem', borderBottom: '1px solid rgba(133,57,83,0.07)', scrollbarWidth: 'none' }}>
+      {/* ── Hero strip ── */}
+      <div style={{ padding: '18px 16px 14px', borderBottom: '1px solid rgba(133,57,83,.08)' }}>
+        <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: 12 }}>
+          <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 26, fontWeight: 700, color: C.dark, lineHeight: 1.08, letterSpacing: '-.02em' }}>
+            Dedicated strategies<br />for <em style={{ color: C.rose }}>every vertical.</em>
+          </h2>
+          <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 42, fontWeight: 700, color: 'rgba(133,57,83,.12)', lineHeight: 1 }}>06</span>
+        </div>
+        <p style={{ fontSize: 12, color: '#999', fontWeight: 300, lineHeight: 1.5, maxWidth: 220 }}>
+          Built around how your customers discover, evaluate, and buy.
+        </p>
+      </div>
+
+      {/* ── Trust chips ── */}
+      <div style={{ display: 'flex', gap: 6, overflowX: 'auto', padding: '12px 16px 14px', scrollbarWidth: 'none' as any }}>
         {[
-          { icon: '✓', label: 'Tailored strategy' },
-          { icon: '↗', label: 'Proven results' },
-          { icon: '◎', label: 'No generic playbooks' },
-          { icon: '⚡', label: 'NDA on request' },
+          { label: 'Tailored strategy', ico: <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke={C.rose} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg> },
+          { label: 'Proven ROI',        ico: <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke={C.rose} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg> },
+          { label: 'NDA available',     ico: <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke={C.rose} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> },
+          { label: '48h turnaround',    ico: <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke={C.rose} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> },
         ].map(c => (
-          <div key={c.label} style={{ display: 'inline-flex', alignItems: 'center', gap: '.35rem', padding: '.3rem .75rem', borderRadius: '999px', border: '1px solid rgba(133,57,83,0.15)', background: '#fff', flexShrink: 0 }}>
-            <span style={{ fontSize: 10, color: '#853953' }}>{c.icon}</span>
+          <div key={c.label} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '5px 10px', borderRadius: 999, background: '#fff', border: '1px solid rgba(133,57,83,.12)', flexShrink: 0 }}>
+            {c.ico}
             <span style={{ fontSize: 11, fontWeight: 500, color: C.dark, whiteSpace: 'nowrap' }}>{c.label}</span>
           </div>
         ))}
       </div>
 
-      {/* Filter tabs */}
-      <div style={{ display: 'flex', overflowX: 'auto', gap: '.35rem', padding: '.6rem 1rem', borderBottom: '1px solid rgba(133,57,83,0.07)', scrollbarWidth: 'none' }}>
+      {/* ── Filter tabs ── */}
+      <div style={{ display: 'flex', gap: 5, overflowX: 'auto', padding: '10px 16px', borderBottom: '1px solid rgba(133,57,83,.08)', borderTop: '1px solid rgba(133,57,83,.08)', scrollbarWidth: 'none' as any }}>
         {cats.map(c => (
-          <button key={c} onClick={() => setActiveCat(c)}
-            style={{
-              padding: '.32rem .8rem', borderRadius: '999px', fontSize: 11, fontWeight: 500,
-              border: `1px solid ${activeCat === c ? '#853953' : 'rgba(133,57,83,0.18)'}`,
-              background: activeCat === c ? 'rgba(133,57,83,0.1)' : 'transparent',
-              color: activeCat === c ? '#853953' : '#bbb',
-              flexShrink: 0, cursor: 'pointer',
-              fontFamily: "'Outfit', sans-serif",
-              transition: 'all .18s',
-              WebkitTapHighlightColor: 'transparent',
-            }}>
+          <button key={c} onClick={() => setActiveCat(c)} style={{
+            padding: '5px 13px', borderRadius: 999, fontSize: 11, fontWeight: 500, lineHeight: 1.4,
+            border: `1px solid ${activeCat === c ? C.rose : 'rgba(133,57,83,.18)'}`,
+            background: activeCat === c ? 'rgba(133,57,83,.1)' : 'transparent',
+            color: activeCat === c ? C.rose : '#bbb',
+            flexShrink: 0, cursor: 'pointer', fontFamily: "'Outfit', sans-serif",
+            transition: 'all .15s', WebkitTapHighlightColor: 'transparent',
+          }}>
             {c}
           </button>
         ))}
       </div>
 
-      {/* Industry list */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '0 1rem .5rem' }}>
+      {/* ── Cards ── */}
+      <div style={{ padding: '12px 16px 120px', display: 'flex', flexDirection: 'column', gap: 10 }}>
         <AnimatePresence mode="wait">
-          <motion.div key={activeCat} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.28 }}>
+          <motion.div key={activeCat} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.22 }}
+            style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             {filtered.map((ind, i) => (
               <motion.div
                 key={ind.id}
-                initial={{ opacity: 0, y: 12 }}
+                initial={{ opacity: 0, y: 14 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.38, delay: i * 0.05 }}
+                transition={{ duration: 0.35, delay: i * 0.06 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={() => onOpen(ind)}
-                style={{ display: 'flex', alignItems: 'stretch', gap: '.7rem', padding: '.8rem 0', borderBottom: '1px solid rgba(44,44,44,0.07)', cursor: 'pointer' }}
+                style={{ background: '#fff', borderRadius: 16, border: '1px solid rgba(133,57,83,.09)', overflow: 'hidden', cursor: 'pointer' }}
               >
-                {/* Left: num + icon */}
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '.4rem', flexShrink: 0, width: '2.4rem' }}>
-                  <span style={{ fontFamily: 'monospace', fontSize: 10, fontWeight: 600, color: 'rgba(133,57,83,0.4)', lineHeight: 1 }}>{ind.idx}</span>
-                  <div style={{ width: '2.4rem', height: '2.4rem', borderRadius: '.75rem', background: 'rgba(133,57,83,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, color: '#853953' }}>
-                    {ind.icon(15)}
+                {/* Card top */}
+                <div style={{ padding: '14px 14px 12px', display: 'flex', alignItems: 'flex-start', gap: 11 }}>
+                  <div style={iconBox}>{ind.icon(18)}</div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, marginBottom: 3 }}>
+                      <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 17, fontWeight: 700, color: C.dark, lineHeight: 1.15, flex: 1, minWidth: 0 }}>
+                        {ind.label}
+                      </h3>
+                      <span style={{ fontFamily: 'monospace', fontSize: 10, color: 'rgba(133,57,83,.35)', flexShrink: 0 }}>{ind.idx}</span>
+                    </div>
+                    <p style={{ fontSize: 11, color: '#bbb', fontWeight: 300, lineHeight: 1.3, marginBottom: 10 }}>{ind.tag}</p>
+                    {/* Stats trio */}
+                    <div style={{ display: 'flex', gap: 6 }}>
+                      {ind.stats.map((s, j) => (
+                        <div key={j} style={statChip}>
+                          <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 15, fontWeight: 700, color: C.rose, lineHeight: 1, marginBottom: 2 }}>{s.v}</div>
+                          <div style={{ fontSize: 9, textTransform: 'uppercase' as const, letterSpacing: '.07em', color: '#bbb', lineHeight: 1.2 }}>{s.l}</div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
 
-                {/* Body */}
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.05rem', fontWeight: 700, color: C.dark, lineHeight: 1.2, marginBottom: '.15rem' }}>{ind.label}</h3>
-                  <p style={{ fontSize: 10, color: '#bbb', fontWeight: 300, marginBottom: '.4rem', letterSpacing: '.02em' }}>{ind.tag}</p>
-                  <div style={{ display: 'flex', gap: '.4rem' }}>
-                    {ind.stats.map((s, j) => (
-                      <div key={j} style={{ background: 'rgba(133,57,83,0.06)', borderRadius: '.45rem', padding: '.25rem .55rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                        <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '.85rem', fontWeight: 700, color: '#853953', lineHeight: 1 }}>{s.v}</span>
-                        <span style={{ fontSize: '8.5px', textTransform: 'uppercase', letterSpacing: '.1em', color: '#bbb', lineHeight: 1.2, marginTop: 1, whiteSpace: 'nowrap' }}>{s.l}</span>
-                      </div>
-                    ))}
+                {/* Card footer */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '9px 14px', borderTop: '1px solid rgba(133,57,83,.07)', background: 'rgba(133,57,83,.018)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <span style={{ fontSize: 11, fontWeight: 500, color: 'rgba(133,57,83,.6)' }}>{ind.deliverables.length} deliverables</span>
+                    <span style={{ width: 3, height: 3, borderRadius: '50%', background: 'rgba(133,57,83,.3)', display: 'inline-block' }} />
+                    <span style={{ fontSize: 10, fontWeight: 500, textTransform: 'uppercase' as const, letterSpacing: '.1em', color: '#bbb' }}>{ind.category}</span>
                   </div>
-                </div>
-
-                {/* Right */}
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'space-between', flexShrink: 0 }}>
-                  <div style={{ width: '1.6rem', height: '1.6rem', borderRadius: '50%', background: 'rgba(133,57,83,0.09)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <IconArrow size={11} />
+                  <div style={{ width: 26, height: 26, borderRadius: '50%', background: 'rgba(133,57,83,.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <IconArrow size={12} />
                   </div>
-                  <span style={{ fontSize: 10, color: 'rgba(133,57,83,0.5)', fontWeight: 500, textAlign: 'right', marginTop: '.25rem' }}>
-                    {ind.deliverables.length} deliverables
-                  </span>
                 </div>
               </motion.div>
             ))}
@@ -545,16 +575,24 @@ function MobileLayout({ onOpen }: { onOpen: (i: Industry) => void }) {
         </AnimatePresence>
       </div>
 
-      {/* Sticky bottom bar */}
-      <div style={{ position: 'sticky', bottom: 0, background: '#fff', borderTop: '1px solid rgba(133,57,83,0.12)', padding: '.7rem 1rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '.75rem', zIndex: 30 }}>
+      {/* ── Bottom CTA bar ── */}
+      <div style={{ background: '#fff', borderTop: '1px solid rgba(133,57,83,.12)', padding: '10px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
         <div>
-          <p style={{ fontSize: 11, color: C.dark, fontWeight: 500, margin: 0, lineHeight: 1.4 }}>Don't see your industry?</p>
+          <p style={{ fontSize: 12, fontWeight: 600, color: C.dark, margin: 0, lineHeight: 1.4 }}>Don't see your industry?</p>
           <p style={{ fontSize: 11, color: '#bbb', fontWeight: 300, margin: 0 }}>We likely work with it.</p>
         </div>
-        <a href="#contact" style={{ display: 'inline-flex', alignItems: 'center', gap: '.4rem', padding: '.65rem 1.25rem', borderRadius: '999px', background: `linear-gradient(135deg, ${C.rose}, ${C.plum})`, color: '#fff', border: 'none', cursor: 'pointer', fontFamily: "'Outfit', sans-serif", fontSize: '.78rem', fontWeight: 600, whiteSpace: 'nowrap', textDecoration: 'none', boxShadow: '0 4px 14px rgba(133,57,83,0.28)', flexShrink: 0 }}>
-          Let's talk <IconArrow size={12} />
+        <a href="#contact" style={{
+          display: 'inline-flex', alignItems: 'center', gap: 6,
+          padding: '10px 18px', borderRadius: 999,
+          background: `linear-gradient(135deg, ${C.rose}, ${C.plum})`,
+          color: '#fff', border: 'none', cursor: 'pointer',
+          fontFamily: "'Outfit', sans-serif", fontSize: 13, fontWeight: 600,
+          whiteSpace: 'nowrap', textDecoration: 'none', flexShrink: 0,
+        }}>
+          Let's talk <IconArrow size={13} />
         </a>
       </div>
+
     </div>
   );
 }
