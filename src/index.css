@@ -1,9 +1,6 @@
 
 
-:root {
-    --cursor-x: 0px;
-    --cursor-y: 0px;
-  }
-  
- 
+
+@import "tailwindcss";
+
   

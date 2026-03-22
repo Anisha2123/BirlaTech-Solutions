@@ -1,7 +1,7 @@
 import Hero from "../components/Hero";
 import Services from "../components/Services";
 import Experience from "../components/Experience";
-import Skills from "../components/Skills";
+import Skills from "../components/ProcessSection";
 import Projects from "../components/Projects";
 import Resume from "../components/Resume";
 import Contact from "../components/Contact";
@@ -11,25 +11,26 @@ import TechStack from "../components/TechStack";
 import TrustSlider from "../components/TrustSlider";
 import FAQ from "../components/FAQ";
 import Testimonials from "../components/Testimonials";
+import WorkShowcase from "../components/Workshowcase";
 const Home = () => {
   return (
    <>
   <Hero />                
   {/* // Outcome + Authority */}
-  <ProofMetrics />        
+  {/* <ProofMetrics />         */}
   {/* // Trust & credibility early */}
   <Services />            
   {/* // What problems you solve (NOT features) */}
+  <WorkShowcase />
   <Skills />         
   {/* // How you deliver (Discover → Build → Scale) */}
   <IndustryUseCases />    
   {/* // “Have you worked with people like me?” */}
-  <Testimonials />        
-  {/* // Social proof (after value is clear) */}
   <FAQ />                 
   {/* // Objection handling */}
   <Contact />             
   {/* // Conversion */}
+ 
 </>
 
   );

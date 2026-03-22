@@ -1,344 +1,588 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  ShoppingBag, 
-  ShieldCheck, 
-  LineChart, 
-  Cpu, 
-  ArrowRight,
-  X,
-  Layers,
-  Database,
-  Server,
-  GlobeLock
-} from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence, useInView } from 'framer-motion';
 
-// Define interface for industry data
-interface Industry {
-    id: string;
-    title: string;
-    icon: JSX.Element;
-    description: string;
-    metrics: string[];
-    color: string;
-    // New hypothetical tech stack data for the modal deep dive
-    stackDetails: { tier: string; tech: string; icon: JSX.Element }[];
-}
+/* ── Google Fonts ──────────────────────────────────────────────────────────
+   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+─────────────────────────────────────────────────────────────────────────── */
 
+// ─── Icons ───────────────────────────────────────────────────────────────────
+const IconArrow = ({ size = 16 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M5 12h14M12 5l7 7-7 7" />
+  </svg>
+);
+const IconX = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M18 6 6 18M6 6l12 12" />
+  </svg>
+);
+const IconCheck = () => (
+  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="20 6 9 17 4 12" />
+  </svg>
+);
 
-const industries: Industry[] = [
+// ─── Data ─────────────────────────────────────────────────────────────────────
+const industries = [
   {
-    id: 'ecommerce',
-    title: 'E-Commerce & Retail',
-    icon: <ShoppingBag />,
-    description: 'High-conversion storefronts with headless CMS integration and global scaling.',
-    metrics: ['35% Conversion Lift', 'Sub-2s Load Times', 'Multi-currency ready'],
-    color: 'from-blue-500 to-cyan-400',
-    stackDetails: [
-        { tier: 'Frontend Edge', tech: 'Next.js on Vercel Edge Network', icon: <GlobeLock size={18} /> },
-        { tier: 'Headless Commerce', tech: 'Shopify / BigCommerce API', icon: <ShoppingBag size={18} /> },
-        { tier: 'Data Layer', tech: 'Redis & PostgreSQL', icon: <Database size={18} /> }
-    ]
+    id: 'ecommerce', idx: '01', label: 'E-Commerce & Retail', category: 'Commerce',
+    tag: 'Storefronts that convert at scale.',
+    hook: "From boutique DTC brands to multi-SKU retailers — we build digital retail experiences that turn browsers into buyers and buyers into advocates.",
+    stats: [{ v: '35%', l: 'Avg. conversion lift' }, { v: '2.1s', l: 'Median load time' }, { v: '4.8×', l: 'ROAS on paid social' }],
+    deliverables: ['Custom storefront design & dev', 'Product page CRO', 'Abandoned cart social retargeting', 'Influencer campaign management', 'Multi-platform ad creative'],
+    insight: "The brands that win in e-commerce don't just sell — they build communities. Every touchpoint we design works toward that compounding effect.",
+    icon: (size: number) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" /><line x1="3" y1="6" x2="21" y2="6" /><path d="M16 10a4 4 0 01-8 0" /></svg>,
   },
   {
-    id: 'fintech',
-    title: 'FinTech & Banking',
-    icon: <LineChart />,
-    description: 'Secure, PCI-compliant financial dashboards and real-time data visualization.',
-    metrics: ['Bank-grade Security', 'Real-time Analytics', '99.99% Uptime'],
-    color: 'from-indigo-600 to-blue-500',
-    stackDetails: [
-        { tier: 'Security Layer', tech: 'Vault & MTLS Encryption', icon: <ShieldCheck size={18} /> },
-        { tier: 'Real-time Engine', tech: 'Kafka Streams & WebSockets', icon: <Activity size={18} /> },
-        { tier: 'Compliance Core', tech: 'Isolated Kubernetes Clusters', icon: <Server size={18} /> }
-    ]
+    id: 'fintech', idx: '02', label: 'FinTech & Finance', category: 'Finance',
+    tag: 'Trust-first digital presence.',
+    hook: "Financial brands live or die on credibility. We craft digital experiences and content strategies that communicate authority without sacrificing approachability.",
+    stats: [{ v: '62%', l: 'Increase in qualified leads' }, { v: '99.9%', l: 'Uptime SLA' }, { v: '3.2×', l: 'Organic reach growth' }],
+    deliverables: ['Compliance-aware content strategy', 'LinkedIn & thought leadership', 'Landing page & funnel design', 'Data visualization dashboards', 'SEO for regulated terms'],
+    insight: "In finance, clarity IS the product. We translate complex offerings into narratives that build trust at every scroll depth.",
+    icon: (size: number) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18" /><polyline points="17 6 23 6 23 12" /></svg>,
   },
   {
-    id: 'saas',
-    title: 'Enterprise SaaS',
-    icon: <Cpu />,
-    description: 'Scalable multi-tenant architectures and complex workflow automation tools.',
-    metrics: ['API-First Design', 'Microservices Architecture', 'RBAC Ready'],
-    color: 'from-slate-800 to-slate-900',
-    stackDetails: [
-        { tier: 'API Gateway', tech: 'GraphQL Federation', icon: <Layers size={18} /> },
-        { tier: 'Auth Provider', tech: 'Auth0 / Clerk Enterprise', icon: <ShieldCheck size={18} /> },
-        { tier: 'Microservices', tech: 'Docker & Go/Rust services', icon: <Cpu size={18} /> }
-    ]
+    id: 'saas', idx: '03', label: 'SaaS & Tech', category: 'Tech',
+    tag: 'Growth infrastructure for software.',
+    hook: "Acquisition, activation, retention — we partner with SaaS companies at every funnel stage, from first impression to product-led expansion loops.",
+    stats: [{ v: '41%', l: 'Reduction in CAC' }, { v: '5.7×', l: 'Trial-to-paid lift' }, { v: '280%', l: 'LinkedIn follower growth' }],
+    deliverables: ['Product marketing web pages', 'Developer-focused content', 'Onboarding flow design', 'PLG social campaigns', 'Competitive positioning'],
+    insight: "SaaS buyers do 70% of their research before talking to sales. We make sure every piece of your digital presence does selling while you sleep.",
+    icon: (size: number) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="4" y="4" width="16" height="16" rx="2" /><rect x="9" y="9" width="6" height="6" /><line x1="9" y1="1" x2="9" y2="4" /><line x1="15" y1="1" x2="15" y2="4" /><line x1="9" y1="20" x2="9" y2="23" /><line x1="15" y1="20" x2="15" y2="23" /></svg>,
   },
   {
-    id: 'healthcare',
-    title: 'HealthTech',
-    icon: <ShieldCheck />,
-    description: 'HIPAA-compliant platforms focused on data privacy and patient experience.',
-    metrics: ['Data Encryption', 'Regulatory Compliance', 'Patient Portals'],
-    color: 'from-blue-700 to-indigo-800',
-    stackDetails: [
-        { tier: 'HIPAA Compliance', tech: 'AWS Dedicated Instances', icon: <ShieldCheck size={18} /> },
-        { tier: 'Data Storage', tech: 'Encrypted RDS (AES-256)', icon: <Database size={18} /> },
-        { tier: 'Audit Trail', tech: 'Immutable Ledger Logging', icon: <LineChart size={18} /> }
-    ]
-  }
+    id: 'health', idx: '04', label: 'Health & Wellness', category: 'Health',
+    tag: 'Brands built on credibility & care.',
+    hook: "Health audiences demand authenticity above all. We craft compliant, compassionate digital strategies that educate, engage, and convert with integrity.",
+    stats: [{ v: '8.9×', l: 'Engagement rate avg.' }, { v: '100%', l: 'HIPAA-aware content' }, { v: '190%', l: 'Community growth (3mo)' }],
+    deliverables: ['Patient-facing web experiences', 'Health content & SEO strategy', 'Instagram & TikTok management', 'Practitioner thought leadership', 'Email nurture design'],
+    insight: "People make health decisions based on who they trust. Our job is to make sure that trust lands on your brand, not your competitor's.",
+    icon: (size: number) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" /></svg>,
+  },
+  {
+    id: 'realestate', idx: '05', label: 'Real Estate', category: 'Property',
+    tag: 'Listings that generate inbound.',
+    hook: "Real estate is hyper-local and hyper-visual. We build digital presences that capture attention in crowded feeds and convert it into qualified inquiries.",
+    stats: [{ v: '3.4×', l: 'Inbound lead growth' }, { v: '48h', l: 'Content turnaround' }, { v: '220%', l: 'Organic profile reach' }],
+    deliverables: ['Property landing page design', 'Listing social campaigns', 'Agent personal brand strategy', 'Video & reel production briefs', 'Local SEO & GMB optimization'],
+    insight: "Buyers scroll Instagram before they call an agent. We make sure your listings — and your name — are what stops their thumb.",
+    icon: (size: number) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" /><polyline points="9 22 9 12 15 12 15 22" /></svg>,
+  },
+  {
+    id: 'hospitality', idx: '06', label: 'Travel & Hospitality', category: 'Travel',
+    tag: 'Experiences sold before arrival.',
+    hook: "In travel, desire precedes decision. We create aspirational digital campaigns and seamless booking experiences that capture intent and drive direct reservations.",
+    stats: [{ v: '55%', l: 'Direct booking increase' }, { v: '12×', l: 'UGC campaign reach' }, { v: '4.9★', l: 'Review profile avg.' }],
+    deliverables: ['Destination website design', 'Visual-first social strategy', 'UGC & influencer activations', 'Email & loyalty campaigns', 'Google & Meta ad creative'],
+    insight: "The trip is sold in the scroll. Every piece of content we create is designed to make someone close their laptop and book.",
+    icon: (size: number) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><line x1="2" y1="12" x2="22" y2="12" /><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z" /></svg>,
+  },
 ];
 
-// Need to import Activity for FinTech dummy data
-import { Activity } from 'lucide-react';
+type Industry = typeof industries[0];
 
+const C = { rose: '#853953', plum: '#612D53', dark: '#2C2C2C', bg: '#F3F4F4' };
 
-const IndustryUseCases = () => {
-  const [activeTab, setActiveTab] = useState(industries[0]);
-  // New state for modal visibility
-  const [isModalOpen, setIsModalOpen] = useState(false);
+// ─── Shared Modal ─────────────────────────────────────────────────────────────
 
-  // Prevent body scroll when modal is open
+function IndustryModal({ industry, onClose }: { industry: Industry | null; onClose: () => void }) {
   useEffect(() => {
-    if (isModalOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
-    return () => { document.body.style.overflow = 'unset'; };
-  }, [isModalOpen]);
+    if (!industry) return;
+    document.body.style.overflow = 'hidden';
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', onKey);
+    return () => { document.body.style.overflow = ''; window.removeEventListener('keydown', onKey); };
+  }, [industry, onClose]);
+
+  if (!industry) return null;
 
   return (
-    <section id="industries" className="py-14 px-6 bg-white overflow-hidden relative">
-      <div className="max-w-7xl mx-auto relative z-10">
-        
-        {/* Header */}
-        {/* Header Section */}
-<div className="flex flex-col md:flex-row md:items-end justify-between md:mb-24 max-sm:mb-8 gap-8">
-  <div className="max-w-3xl">
-    {/* Monospace Protocol Badge */}
-    <motion.div
-      initial={{ opacity: 0, x: -20 }}
-      whileInView={{ opacity: 1, x: 0 }}
-      viewport={{ once: true }}
-      className="flex items-center gap-3 mb-6"
-    >
-      <div className="h-[2px] w-8 bg-blue-600" />
-      <span className="font-mono text-blue-600 font-bold text-[10px] uppercase tracking-[0.4em]">
-        Domain Verticals
-      </span>
-    </motion.div>
-
-    {/* Authority Headline */}
-    <h2 className="font-heading text-4xl md:text-6xl font-black tracking-tighter text-slate-900 leading-[1.1]">
-      Tailored for <br />
-      <span className="text-slate-400 font-light italic text-transparent bg-clip-text bg-gradient-to-r from-slate-400 to-slate-500">
-        Industry Leaders.
-      </span>
-    </h2>
-  </div>
-
-  {/* Refined Context Subtext */}
-  <p className="font-sans text-slate-500 text-lg max-w-sm leading-relaxed border-l border-slate-100 pl-8">
-    Engineering high-stakes solutions where <span className="text-slate-900 font-semibold">performance and security</span> are non-negotiable.
-  </p>
-</div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-          
-          {/* Left Side: Navigation Labels */}
-          <div className="lg:col-span-5 space-y-4">
-            {industries.map((item) => (
-              <button
-                key={item.id}
-                onMouseEnter={() => setActiveTab(item)}
-                onClick={() => setActiveTab(item)}
-                className={`w-full text-left p-6 rounded-2xl transition-all duration-300 group relative overflow-hidden ${
-                  activeTab.id === item.id 
-                  ? 'bg-slate-50 border-l-4 border-[#2563EB]' 
-                  : 'hover:bg-slate-50/50 border-l-4 border-transparent'
-                }`}
-              >
-                <div className="flex items-center gap-4">
-                  <div className={`p-2 rounded-lg transition-colors ${
-                    activeTab.id === item.id ? 'bg-[#2563EB] text-white' : 'bg-slate-100 text-slate-500'
-                  }`}>
-                    {React.cloneElement(item.icon as React.ReactElement, { size: 20 })}
-                  </div>
-                  <span className={`text-xl font-semibold ${
-                    activeTab.id === item.id ? 'text-slate-900' : 'text-slate-400'
-                  }`}>
-                    {item.title}
-                  </span>
-                </div>
-              </button>
-            ))}
-          </div>
-
-          {/* Right Side: Dynamic Content Display */}
-          <div className="lg:col-span-7 relative">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeTab.id}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                transition={{ duration: 0.4 }}
-                className="relative min-h-[450px] bg-slate-900 rounded-[2.5rem] p-10 md:p-16 overflow-hidden text-white"
-              >
-                {/* Background Decoration */}
-                <div className={`absolute top-0 right-0 w-64 h-64 bg-gradient-to-br ${activeTab.color} opacity-20 blur-[80px] rounded-full`} />
-                
-                <div className="relative z-10 flex flex-col h-full justify-between max-sm:text-center">
-                  <div>
-                    <span className="text-blue-400 font-mono text-sm tracking-widest uppercase mb-6 block">
-                      Case Study // {activeTab.id}
-                    </span>
-                    <h3 className="text-2xl md:text-4xl font-bold mb-6">
-                      {activeTab.description}
-                    </h3>
-                    
-                    {/* Feature Tags */}
-                    <div className="flex flex-wrap gap-3 mb-12 max-sm:justify-center">
-                      {activeTab.metrics.map((metric, i) => (
-                        <span key={i} className="px-4 py-2 bg-white/5 border border-white/10 rounded-full text-sm font-medium text-blue-200">
-                          {metric}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="mt-auto">
-                    {/* UPDATE: Button now triggers modal */}
-                    <button 
-                        onClick={() => setIsModalOpen(true)}
-                        className="flex items-center gap-2 text-white font-semibold group/btn hover:text-blue-400 transition-colors"
-                    >
-                      View {activeTab.title} Infrastructure 
-                      <ArrowRight className="w-5 h-5 group-hover/btn:translate-x-2 transition-transform" />
-                    </button>
-                  </div>
-                </div>
-                
-                {/* Decorative code snippet */}
-                <div className="absolute bottom-[-20px] right-[-20px] opacity-10 font-mono text-[10px] hidden md:block select-none pointer-events-none">
-                  <pre>{`const init = () => Devlyn.deploy('${activeTab.id}');`}</pre>
-                </div>
-              </motion.div>
-            </AnimatePresence>
-          </div>
-        </div>
-      </div>
-
-      {/* =========================== */}
-      {/* ULTRA MODERN ENTERPRISE MODAL */}
-      {/* =========================== */}
-      <AnimatePresence>
-        {isModalOpen && (
-          <>
-            {/* Backdrop with Blur */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setIsModalOpen(false)}
-              className="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-[998] transition-all"
-            />
-
-           {/* Modal Container */}
-{/* Modal Container */}
-<div className="fixed inset-0 z-[999] flex items-center justify-center p-4 sm:p-6 bg-slate-950/90 backdrop-blur-md">
-  <motion.div
-    initial={{ opacity: 0, scale: 0.95, y: 20 }}
-    animate={{ opacity: 1, scale: 1, y: 0 }}
-    exit={{ opacity: 0, scale: 0.95, y: 20 }}
-    transition={{ type: "spring", damping: 25, stiffness: 300 }}
-    className="bg-slate-900 border border-white/10 w-full max-w-4xl max-h-[85vh] rounded-[1.5rem] md:rounded-[2rem] shadow-2xl overflow-hidden relative flex flex-col"
-  >
-    {/* Modal Ambient Glow - Restricted to brand blue */}
-    <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600/10 blur-[100px] rounded-full pointer-events-none" />
-
-    {/* Scrollable Content Area */}
-    <div className="relative z-10 flex flex-col overflow-y-auto p-6 md:p-10 scrollbar-hide">
-      
-      {/* Modal Header */}
-      <div className="flex justify-between items-start mb-8 md:mb-12">
-        <div className="space-y-1">
-          <span className="text-blue-400 font-mono text-[10px] font-bold tracking-[0.4em] uppercase block">
-            Technical Blueprint
-          </span>
-          <h3 className="text-2xl md:text-4xl font-black tracking-tighter text-white flex items-center gap-3">
-            {activeTab.icon} <span className="bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">{activeTab.title}</span>
-          </h3>
-        </div>
-        <button 
-          onClick={() => setIsModalOpen(false)}
-          className="p-2 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all shrink-0"
+    <AnimatePresence>
+      {industry && (
+        <motion.div
+          key="backdrop"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.22 }}
+          onClick={onClose}
+          style={{
+            position: 'fixed', inset: 0, zIndex: 1000,
+            background: 'rgba(44,44,44,0.7)',
+            backdropFilter: 'blur(14px)',
+            display: 'flex',
+            alignItems: 'flex-end',
+            justifyContent: 'center',
+            padding: '0',
+          }}
+          className="sm:!items-center sm:!p-6"
         >
-          <X size={20} className="text-slate-400 hover:text-white" />
-        </button>
-      </div>
+          <motion.div
+            initial={{ y: 60, scale: 0.97, opacity: 0 }}
+            animate={{ y: 0, scale: 1, opacity: 1 }}
+            exit={{ y: 60, scale: 0.97, opacity: 0 }}
+            transition={{ type: 'spring', damping: 26, stiffness: 260 }}
+            onClick={e => e.stopPropagation()}
+            className="w-full sm:max-w-3xl max-h-[92vh] overflow-y-auto relative"
+            style={{ background: C.bg, borderRadius: '1.5rem 1.5rem 0 0', boxShadow: '0 60px 120px rgba(44,44,44,0.26)' }}
+          >
+            {/* Gradient bar */}
+            <div style={{ height: 4, background: `linear-gradient(90deg, ${C.rose}, ${C.plum})`, borderRadius: '1.5rem 1.5rem 0 0' }} />
 
-      {/* Modal Body */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12">
-        
-        {/* Column 1: The Tech Stack List */}
-        <div className="space-y-6">
-          <h4 className="text-[11px] font-mono font-bold uppercase tracking-[0.2em] text-blue-400/80 border-b border-white/5 pb-3">Infrastructure Stack</h4>
-          <div className="grid grid-cols-1 gap-3">
-            {activeTab.stackDetails.map((detail, idx) => (
-              <div key={idx} className="flex items-start gap-4 p-4 rounded-xl bg-white/[0.03] border border-white/5 hover:border-blue-500/40 transition-all group/item">
-                <div className="text-blue-400 mt-1 shrink-0 group-hover/item:scale-110 transition-transform">{detail.icon}</div>
+            {/* Drag handle (mobile only) */}
+            <div className="flex justify-center pt-3 pb-1 sm:hidden">
+              <div style={{ width: '2.5rem', height: '3px', borderRadius: '999px', background: 'rgba(44,44,44,0.15)' }} />
+            </div>
+
+            <div style={{ padding: 'clamp(1.5rem,4vw,2.5rem)' }}>
+              {/* Header */}
+              <div className="flex justify-between items-start gap-4 mb-6">
                 <div>
-                  <p className="text-[9px] font-mono text-slate-500 uppercase tracking-widest mb-1">{detail.tier}</p>
-                  <p className="text-sm md:text-base font-bold text-slate-200 group-hover/item:text-white transition-colors">{detail.tech}</p>
+                  <div className="inline-flex items-center gap-2 mb-3 px-3 py-1 rounded-full text-[10px] font-bold tracking-[.14em] uppercase"
+                    style={{ background: 'rgba(133,57,83,0.1)', color: C.rose, fontFamily: 'monospace' }}>
+                    {industry.idx} / Industry
+                  </div>
+                  <h3 className="font-bold leading-tight m-0"
+                    style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 'clamp(1.65rem,3.5vw,2.4rem)', color: C.dark }}>
+                    {industry.label}
+                  </h3>
+                </div>
+                <button onClick={onClose}
+                  className="w-10 h-10 rounded-full border flex items-center justify-center transition-all shrink-0 hover:bg-[#2C2C2C] hover:text-[#F3F4F4] hover:border-[#2C2C2C]"
+                  style={{ border: '1px solid rgba(44,44,44,0.12)', background: 'white', color: '#666', cursor: 'pointer' }}>
+                  <IconX />
+                </button>
+              </div>
+
+              {/* Hook */}
+              <p className="text-sm leading-relaxed mb-6 pb-6 border-b" style={{ color: '#555', borderColor: 'rgba(44,44,44,0.07)' }}>
+                {industry.hook}
+              </p>
+
+              {/* Stats */}
+              <div className="grid grid-cols-3 gap-px overflow-hidden rounded-2xl mb-6"
+                style={{ background: 'rgba(44,44,44,0.07)' }}>
+                {industry.stats.map((s, i) => (
+                  <div key={i} className="text-center py-5 px-2" style={{ background: C.bg }}>
+                    <div className="font-bold leading-none mb-1"
+                      style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '2rem', color: C.rose }}>
+                      {s.v}
+                    </div>
+                    <div className="text-[10px] text-[#aaa] uppercase tracking-[.08em]">{s.l}</div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Deliverables + Insight */}
+              <div className="grid gap-5 mb-6" style={{ gridTemplateColumns: 'repeat(auto-fit,minmax(200px,1fr))' }}>
+                <div>
+                  <p className="text-[10px] uppercase tracking-[.15em] mb-3" style={{ color: '#bbb', fontFamily: 'monospace' }}>
+                    What we deliver
+                  </p>
+                  <ul className="list-none p-0 m-0 flex flex-col gap-2">
+                    {industry.deliverables.map((d, i) => (
+                      <li key={i} className="flex items-center gap-2.5 text-sm" style={{ color: '#333' }}>
+                        <div className="w-5 h-5 rounded-full flex items-center justify-center shrink-0"
+                          style={{ background: C.rose }}>
+                          <IconCheck />
+                        </div>
+                        {d}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="rounded-2xl p-5 flex flex-col justify-center"
+                  style={{ background: 'white', borderLeft: `3px solid ${C.rose}` }}>
+                  <p className="text-[10px] uppercase tracking-[.15em] mb-3" style={{ color: '#bbb', fontFamily: 'monospace' }}>
+                    Our take
+                  </p>
+                  <p className="text-sm leading-relaxed italic m-0" style={{ color: C.dark }}>
+                    "{industry.insight}"
+                  </p>
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
 
-        {/* Column 2: Architecture Visualization */}
-        <div className="relative bg-white/[0.02] rounded-[1.5rem] p-8 border border-white/5 flex flex-col justify-center min-h-[300px]">
-          <span className="absolute top-6 left-8 text-[9px] font-mono text-slate-500 uppercase tracking-widest">Protocol Visualization // 0x4F</span>
-          
-          <div className="mt-5 flex flex-col gap-4 items-center justify-center opacity-90">
-            <div className="w-32 py-2 px-4 text-center border border-blue-500/30 bg-blue-500/5 rounded-lg text-[10px] font-mono font-bold text-blue-400">Client Edge</div>
-            <div className="h-6 w-px bg-gradient-to-b from-blue-500/40 to-white/10"></div>
-            
-            <div className="flex gap-4 w-full justify-center">
-              <div className="flex-1 p-4 text-center border border-white/10 bg-white/5 rounded-xl text-xs font-bold text-white">
-                <Server size={18} className="mx-auto mb-2 text-blue-400" /> API Core
-              </div>
-              <div className="flex-1 p-4 text-center border border-white/10 bg-white/5 rounded-xl text-xs font-bold text-white">
-                <Database size={18} className="mx-auto mb-2 text-blue-400" /> Data Store
+              {/* Footer */}
+              <div className="flex items-center justify-between flex-wrap gap-3 pt-5 border-t"
+                style={{ borderColor: 'rgba(44,44,44,0.07)' }}>
+                <span className="text-xs" style={{ color: '#ccc', fontFamily: 'monospace' }}>
+                  Ready to grow in this space?
+                </span>
+                <a href="#contact" onClick={onClose}
+                  className="inline-flex items-center gap-2 px-5 py-3 rounded-full text-white text-xs font-semibold uppercase tracking-[.06em] transition-all hover:opacity-90 hover:-translate-y-0.5"
+                  style={{ background: `linear-gradient(135deg, ${C.rose}, ${C.plum})`, textDecoration: 'none' }}>
+                  Let's talk <IconArrow size={14} />
+                </a>
               </div>
             </div>
-            
-            <div className="h-6 w-px bg-gradient-to-b from-white/10 to-blue-500/40"></div>
-            <div className="w-36 py-2 px-4 text-center border border-blue-500/30 bg-blue-500/5 rounded-lg text-[10px] font-mono font-bold text-blue-400">Secure Protocol</div>
-          </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
+// ─── DESKTOP — original, untouched ───────────────────────────────────────────
+
+function DesktopRow({ industry, index, onOpen }: { industry: Industry; index: number; onOpen: () => void }) {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: '-40px' });
+  const [hovered, setHovered] = useState(false);
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, x: -30 }}
+      animate={inView ? { opacity: 1, x: 0 } : {}}
+      transition={{ duration: 0.55, delay: index * 0.07, ease: [0.22, 1, 0.36, 1] }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      onClick={() => onOpen(industry)}
+      style={{
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        padding: `1.5rem 0 1.5rem ${hovered ? '0.75rem' : '0'}`,
+        borderBottom: '1px solid rgba(44,44,44,0.08)',
+        cursor: 'pointer', position: 'relative', overflow: 'hidden',
+        transition: 'padding .3s ease',
+      }}
+    >
+      <motion.div
+        animate={{ scaleY: hovered ? 1 : 0 }}
+        initial={{ scaleY: 0 }}
+        transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+        style={{
+          position: 'absolute', left: 0, top: 0, bottom: 0, width: 3,
+          background: `linear-gradient(180deg, ${C.rose}, ${C.plum})`,
+          transformOrigin: 'top', borderRadius: '0 2px 2px 0',
+        }}
+      />
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
+        <span style={{ fontFamily: 'monospace', fontSize: 11, color: hovered ? C.rose : '#ccc', letterSpacing: '.1em', minWidth: 24, transition: 'color .3s' }}>
+          {industry.idx}
+        </span>
+        <div style={{
+          width: 44, height: 44, borderRadius: 12,
+          background: hovered ? 'rgba(133,57,83,0.1)' : 'white',
+          color: hovered ? C.rose : '#bbb',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          border: `1px solid ${hovered ? 'rgba(133,57,83,0.2)' : 'rgba(44,44,44,0.06)'}`,
+          transition: 'all .3s', flexShrink: 0,
+        }}>
+          {industry.icon(24)}
+        </div>
+        <div>
+          <h3 style={{
+            fontFamily: "'Cormorant Garamond', serif",
+            fontSize: 'clamp(1.1rem,2vw,1.4rem)',
+            fontWeight: 700, color: hovered ? C.dark : '#444',
+            margin: 0, transition: 'color .3s', letterSpacing: '-.01em',
+          }}>
+            {industry.label}
+          </h3>
+          <p style={{ fontSize: '.8rem', color: hovered ? C.rose : '#bbb', margin: 0, transition: 'color .3s', fontFamily: 'monospace', letterSpacing: '.03em' }}>
+            {industry.tag}
+          </p>
         </div>
       </div>
 
-      {/* Modal Footer */}
-      <div className="mt-12 pt-8 border-t border-white/5 flex flex-col sm:flex-row gap-6 justify-between items-center">
-        <div className="space-y-1 text-center sm:text-left">
-          <p className="font-mono text-[9px] text-slate-500 uppercase tracking-widest">
-            Security Status: Verified
-          </p>
-          <p className="font-mono text-[9px] text-blue-500/50 uppercase tracking-tighter">
-            Audit ID: {activeTab.id} // Multi-Region Deployment
-          </p>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '.875rem', flexShrink: 0 }}>
+        <motion.div
+          animate={{ opacity: hovered ? 1 : 0, x: hovered ? 0 : 10 }}
+          transition={{ duration: 0.25 }}
+          style={{
+            display: 'flex', alignItems: 'center', gap: 6,
+            background: 'rgba(133,57,83,0.08)',
+            padding: '5px 12px', borderRadius: '100px',
+            color: C.rose, fontSize: '.8rem', fontWeight: 600, whiteSpace: 'nowrap',
+          }}
+        >
+          {industry.stats[0].v}
+          <span style={{ fontSize: 10, color: '#aaa', fontWeight: 400 }}>{industry.stats[0].l}</span>
+        </motion.div>
+        <motion.div animate={{ x: hovered ? 4 : 0, color: hovered ? C.rose : '#ccc' }} transition={{ duration: 0.25 }} style={{ color: '#ccc' }}>
+          <IconArrow size={18} />
+        </motion.div>
+      </div>
+    </motion.div>
+  );
+}
+
+function DesktopLayout({ onOpen }: { onOpen: (i: Industry) => void }) {
+  const headerRef = useRef(null);
+  const headerInView = useInView(headerRef, { once: true });
+
+  return (
+    <section style={{
+      background: C.bg,
+      padding: 'clamp(5rem,9vw,9rem) clamp(1.5rem,7vw,6rem)',
+      fontFamily: "'Outfit', sans-serif",
+      position: 'relative', overflow: 'hidden',
+    }}>
+      <div style={{
+        position: 'absolute', inset: 0, pointerEvents: 'none',
+        backgroundImage: `radial-gradient(ellipse 55% 40% at 5% 70%,rgba(133,57,83,.06) 0%,transparent 100%),radial-gradient(ellipse 40% 35% at 95% 10%,rgba(97,45,83,.07) 0%,transparent 100%)`,
+      }} />
+      <div style={{ maxWidth: 1100, margin: '0 auto', position: 'relative' }} ref={headerRef}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(280px,1fr))', gap: '2rem', alignItems: 'end', marginBottom: 'clamp(3rem,6vw,5.5rem)' }}>
+          <div>
+            <motion.div initial={{ opacity: 0, x: -16 }} animate={headerInView ? { opacity: 1, x: 0 } : {}} transition={{ duration: 0.5 }}
+              style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: '1.5rem' }}>
+              <div style={{ width: 24, height: 2, background: C.rose }} />
+              <span style={{ fontFamily: 'monospace', fontSize: 10, color: C.rose, letterSpacing: '.35em', textTransform: 'uppercase', fontWeight: 700 }}>Industries</span>
+            </motion.div>
+            <motion.h2 initial={{ opacity: 0, y: 28 }} animate={headerInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.65, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
+              style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 'clamp(2.8rem,5.5vw,4.8rem)', fontWeight: 700, color: C.dark, lineHeight: 1.05, margin: 0, letterSpacing: '-.02em' }}>
+              We speak<br /><em style={{ color: C.rose }}>your industry.</em>
+            </motion.h2>
+          </div>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={headerInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.18 }}>
+            <p style={{ fontSize: '.97rem', color: '#888', lineHeight: 1.85, margin: '0 0 1.75rem', paddingLeft: '1.5rem', borderLeft: '2px solid rgba(133,57,83,0.2)' }}>
+              Generic agencies apply generic playbooks. We don't. Every industry below comes with a dedicated strategy — built around how your customers actually discover, evaluate, and buy.
+            </p>
+            <div style={{ display: 'flex', gap: '.75rem', flexWrap: 'wrap' }}>
+              {['6 Verticals', 'Tailored Strategy', 'Proven Results'].map((chip, i) => (
+                <motion.div key={i} initial={{ opacity: 0, scale: 0.85 }} animate={headerInView ? { opacity: 1, scale: 1 } : {}} transition={{ delay: 0.3 + i * 0.07, duration: 0.4 }}
+                  style={{ padding: '5px 14px', background: i === 0 ? C.dark : 'white', color: i === 0 ? C.bg : '#888', borderRadius: '100px', fontSize: 11, fontFamily: 'monospace', letterSpacing: '.06em', border: `1px solid ${i === 0 ? C.dark : 'rgba(44,44,44,0.1)'}` }}>
+                  {chip}
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
         </div>
-        
-        <a href="#contact"
-          onClick={() => setIsModalOpen(false)}
-          className="w-full sm:w-auto px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-full font-bold uppercase tracking-widest text-[10px] flex items-center justify-center gap-3 transition-all active:scale-95 shadow-xl shadow-blue-900/20">
-          Consult on this Protocol <ArrowRight size={14}/>
+
+        <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '.75rem', borderBottom: '1px solid rgba(44,44,44,0.1)', marginBottom: '.25rem' }}>
+          <span style={{ fontSize: 10, fontFamily: 'monospace', color: '#ccc', letterSpacing: '.15em', textTransform: 'uppercase' }}>Sector</span>
+          <span style={{ fontSize: 10, fontFamily: 'monospace', color: '#ccc', letterSpacing: '.15em', textTransform: 'uppercase' }}>Key metric / Action</span>
+        </div>
+
+        {industries.map((ind, i) => <DesktopRow key={ind.id} industry={ind} index={i} onOpen={onOpen} />)}
+
+        <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.5, duration: 0.6 }}
+          style={{ marginTop: '3rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
+          <p style={{ fontSize: '.82rem', color: '#ccc', margin: 0, fontFamily: 'monospace' }}>Don't see your industry? We likely work with it.</p>
+          <a href="#contact" className="group inline-flex items-center gap-2 text-sm font-medium transition-all hover:gap-4"
+            style={{ color: C.rose, textDecoration: 'none', letterSpacing: '.03em' }}>
+            Get in touch <IconArrow size={16} />
+          </a>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+// ─── TABLET — hybrid 2-col card grid ─────────────────────────────────────────
+
+function TabletLayout({ onOpen }: { onOpen: (i: Industry) => void }) {
+  return (
+    <section style={{ background: C.bg, padding: '3rem 1.75rem 4rem', fontFamily: "'Outfit', sans-serif" }}>
+      <div style={{ maxWidth: 900, margin: '0 auto' }}>
+        <div style={{ marginBottom: '2.5rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '.6rem', marginBottom: '1rem' }}>
+            <div style={{ height: 1, width: '1.8rem', background: C.rose }} />
+            <span style={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '.28em', color: C.rose }}>Industries</span>
+          </div>
+          <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 'clamp(2.2rem,4vw,3.2rem)', fontWeight: 700, color: C.dark, lineHeight: 1.06, letterSpacing: '-.02em', marginBottom: '.75rem' }}>
+            We speak <em style={{ color: C.rose }}>your industry.</em>
+          </h2>
+          <p style={{ fontSize: '.87rem', color: '#999', fontWeight: 300, lineHeight: 1.7, maxWidth: 520, borderLeft: '2px solid rgba(133,57,83,.18)', paddingLeft: '1rem', marginBottom: '1.25rem' }}>
+            Dedicated strategies for each vertical — built around how your customers actually discover, evaluate, and buy.
+          </p>
+          <div style={{ display: 'flex', gap: '.5rem', flexWrap: 'wrap' }}>
+            {['6 Verticals', 'Tailored Strategy', 'Proven Results'].map((c, i) => (
+              <span key={i} style={{ padding: '.3rem .85rem', borderRadius: '999px', fontSize: 11, fontWeight: 500, border: '1px solid', borderColor: i === 0 ? C.dark : 'rgba(133,57,83,0.18)', background: i === 0 ? C.dark : 'transparent', color: i === 0 ? C.bg : '#aaa' }}>
+                {c}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+          {industries.map((ind, i) => (
+            <motion.div key={ind.id}
+              initial={{ opacity: 0, y: 18 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-20px' }}
+              transition={{ duration: 0.5, delay: i * 0.06, ease: [0.22, 1, 0.36, 1] }}
+              whileHover={{ y: -4, transition: { duration: 0.22 } }}
+              onClick={() => onOpen(ind)}
+              style={{ background: '#fff', borderRadius: '1.25rem', border: '1px solid rgba(133,57,83,0.09)', padding: '1.25rem', cursor: 'pointer' }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '.75rem', marginBottom: '.9rem' }}>
+                <div style={{ width: '2.2rem', height: '2.2rem', borderRadius: '.7rem', background: 'rgba(133,57,83,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  {ind.icon(16)}
+                </div>
+                <span style={{ fontFamily: 'monospace', fontSize: 11, color: 'rgba(133,57,83,0.4)', marginLeft: 'auto' }}>{ind.idx}</span>
+              </div>
+              <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.1rem', fontWeight: 700, color: C.dark, marginBottom: '.25rem', lineHeight: 1.2 }}>{ind.label}</h3>
+              <p style={{ fontSize: 11, color: '#bbb', fontWeight: 300, marginBottom: '.75rem' }}>{ind.tag}</p>
+              <div style={{ display: 'flex', gap: '.6rem' }}>
+                {ind.stats.slice(0, 2).map((s, j) => (
+                  <div key={j} style={{ flex: 1, background: 'rgba(133,57,83,0.05)', borderRadius: '.6rem', padding: '.5rem', textAlign: 'center' }}>
+                    <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.1rem', fontWeight: 700, color: C.rose, lineHeight: 1 }}>{s.v}</div>
+                    <div style={{ fontSize: '9px', textTransform: 'uppercase', letterSpacing: '.1em', color: '#bbb' }}>{s.l}</div>
+                  </div>
+                ))}
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '.9rem', paddingTop: '.9rem', borderTop: '1px solid rgba(133,57,83,0.07)' }}>
+                <span style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '.14em', color: C.rose }}>View Details</span>
+                <div style={{ width: '1.8rem', height: '1.8rem', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(133,57,83,0.08)' }}>
+                  <IconArrow size={13} />
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ─── MOBILE — high-density app UI ────────────────────────────────────────────
+
+function MobileLayout({ onOpen }: { onOpen: (i: Industry) => void }) {
+  const [activeCat, setActiveCat] = useState('All');
+  const cats = ['All', ...Array.from(new Set(industries.map(i => i.category)))];
+  const filtered = activeCat === 'All' ? industries : industries.filter(i => i.category === activeCat);
+
+  return (
+    <div style={{ fontFamily: "'Outfit', sans-serif", background: C.bg, minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+      {/* Sticky app bar */}
+      <div style={{ position: 'sticky', top: 0, zIndex: 40, background: C.bg, padding: '.65rem 1rem', borderBottom: '1px solid rgba(133,57,83,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '.55rem' }}>
+          <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#853953' }} />
+          <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.15rem', fontWeight: 700, color: C.dark }}>
+            We speak <em style={{ color: '#853953' }}>your industry.</em>
+          </span>
+        </div>
+        <span style={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '.14em', padding: '.25rem .65rem', borderRadius: '999px', background: 'rgba(133,57,83,0.1)', color: '#853953' }}>
+          6 Verticals
+        </span>
+      </div>
+
+      {/* Summary strip */}
+      <div style={{ display: 'flex', overflowX: 'auto', gap: '.5rem', padding: '.65rem 1rem', borderBottom: '1px solid rgba(133,57,83,0.07)', scrollbarWidth: 'none' }}>
+        {[
+          { icon: '✓', label: 'Tailored strategy' },
+          { icon: '↗', label: 'Proven results' },
+          { icon: '◎', label: 'No generic playbooks' },
+          { icon: '⚡', label: 'NDA on request' },
+        ].map(c => (
+          <div key={c.label} style={{ display: 'inline-flex', alignItems: 'center', gap: '.35rem', padding: '.3rem .75rem', borderRadius: '999px', border: '1px solid rgba(133,57,83,0.15)', background: '#fff', flexShrink: 0 }}>
+            <span style={{ fontSize: 10, color: '#853953' }}>{c.icon}</span>
+            <span style={{ fontSize: 11, fontWeight: 500, color: C.dark, whiteSpace: 'nowrap' }}>{c.label}</span>
+          </div>
+        ))}
+      </div>
+
+      {/* Filter tabs */}
+      <div style={{ display: 'flex', overflowX: 'auto', gap: '.35rem', padding: '.6rem 1rem', borderBottom: '1px solid rgba(133,57,83,0.07)', scrollbarWidth: 'none' }}>
+        {cats.map(c => (
+          <button key={c} onClick={() => setActiveCat(c)}
+            style={{
+              padding: '.32rem .8rem', borderRadius: '999px', fontSize: 11, fontWeight: 500,
+              border: `1px solid ${activeCat === c ? '#853953' : 'rgba(133,57,83,0.18)'}`,
+              background: activeCat === c ? 'rgba(133,57,83,0.1)' : 'transparent',
+              color: activeCat === c ? '#853953' : '#bbb',
+              flexShrink: 0, cursor: 'pointer',
+              fontFamily: "'Outfit', sans-serif",
+              transition: 'all .18s',
+              WebkitTapHighlightColor: 'transparent',
+            }}>
+            {c}
+          </button>
+        ))}
+      </div>
+
+      {/* Industry list */}
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '0 1rem .5rem' }}>
+        <AnimatePresence mode="wait">
+          <motion.div key={activeCat} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.28 }}>
+            {filtered.map((ind, i) => (
+              <motion.div
+                key={ind.id}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.38, delay: i * 0.05 }}
+                onClick={() => onOpen(ind)}
+                style={{ display: 'flex', alignItems: 'stretch', gap: '.7rem', padding: '.8rem 0', borderBottom: '1px solid rgba(44,44,44,0.07)', cursor: 'pointer' }}
+              >
+                {/* Left: num + icon */}
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '.4rem', flexShrink: 0, width: '2.4rem' }}>
+                  <span style={{ fontFamily: 'monospace', fontSize: 10, fontWeight: 600, color: 'rgba(133,57,83,0.4)', lineHeight: 1 }}>{ind.idx}</span>
+                  <div style={{ width: '2.4rem', height: '2.4rem', borderRadius: '.75rem', background: 'rgba(133,57,83,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, color: '#853953' }}>
+                    {ind.icon(15)}
+                  </div>
+                </div>
+
+                {/* Body */}
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.05rem', fontWeight: 700, color: C.dark, lineHeight: 1.2, marginBottom: '.15rem' }}>{ind.label}</h3>
+                  <p style={{ fontSize: 10, color: '#bbb', fontWeight: 300, marginBottom: '.4rem', letterSpacing: '.02em' }}>{ind.tag}</p>
+                  <div style={{ display: 'flex', gap: '.4rem' }}>
+                    {ind.stats.map((s, j) => (
+                      <div key={j} style={{ background: 'rgba(133,57,83,0.06)', borderRadius: '.45rem', padding: '.25rem .55rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                        <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '.85rem', fontWeight: 700, color: '#853953', lineHeight: 1 }}>{s.v}</span>
+                        <span style={{ fontSize: '8.5px', textTransform: 'uppercase', letterSpacing: '.1em', color: '#bbb', lineHeight: 1.2, marginTop: 1, whiteSpace: 'nowrap' }}>{s.l}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Right */}
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'space-between', flexShrink: 0 }}>
+                  <div style={{ width: '1.6rem', height: '1.6rem', borderRadius: '50%', background: 'rgba(133,57,83,0.09)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <IconArrow size={11} />
+                  </div>
+                  <span style={{ fontSize: 10, color: 'rgba(133,57,83,0.5)', fontWeight: 500, textAlign: 'right', marginTop: '.25rem' }}>
+                    {ind.deliverables.length} deliverables
+                  </span>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      {/* Sticky bottom bar */}
+      <div style={{ position: 'sticky', bottom: 0, background: '#fff', borderTop: '1px solid rgba(133,57,83,0.12)', padding: '.7rem 1rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '.75rem', zIndex: 30 }}>
+        <div>
+          <p style={{ fontSize: 11, color: C.dark, fontWeight: 500, margin: 0, lineHeight: 1.4 }}>Don't see your industry?</p>
+          <p style={{ fontSize: 11, color: '#bbb', fontWeight: 300, margin: 0 }}>We likely work with it.</p>
+        </div>
+        <a href="#contact" style={{ display: 'inline-flex', alignItems: 'center', gap: '.4rem', padding: '.65rem 1.25rem', borderRadius: '999px', background: `linear-gradient(135deg, ${C.rose}, ${C.plum})`, color: '#fff', border: 'none', cursor: 'pointer', fontFamily: "'Outfit', sans-serif", fontSize: '.78rem', fontWeight: 600, whiteSpace: 'nowrap', textDecoration: 'none', boxShadow: '0 4px 14px rgba(133,57,83,0.28)', flexShrink: 0 }}>
+          Let's talk <IconArrow size={12} />
         </a>
       </div>
     </div>
-  </motion.div>
-</div>
-          </>
-        )}
-      </AnimatePresence>
-
-    </section>
   );
-};
+}
 
-export default IndustryUseCases;
+// ─── MAIN ─────────────────────────────────────────────────────────────────────
+
+export default function IndustryUseCases() {
+  const [activeModal, setActiveModal] = useState<Industry | null>(null);
+
+  return (
+    <>
+      {/* Desktop: ≥1024 */}
+      <div className="hidden lg:block">
+        <DesktopLayout onOpen={setActiveModal} />
+      </div>
+
+      {/* Tablet: 768–1023 */}
+      <div className="hidden md:block lg:hidden">
+        <TabletLayout onOpen={setActiveModal} />
+      </div>
+
+      {/* Mobile: <768 */}
+      <div className="md:hidden">
+        <MobileLayout onOpen={setActiveModal} />
+      </div>
+
+      {/* Modal — shared */}
+      <IndustryModal industry={activeModal} onClose={() => setActiveModal(null)} />
+    </>
+  );
+}
